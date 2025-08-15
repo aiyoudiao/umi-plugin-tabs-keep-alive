@@ -33,7 +33,7 @@ __export(src_exports, {
 });
 module.exports = __toCommonJS(src_exports);
 var src_default = (api) => {
-  api.logger.info("keepaliveEx plugin loaded");
+  api.logger.info("[umi-plugin-tabs-keep-alive] plugin loaded");
   api.registerPlugins([
     require.resolve("./tabsLayoutEx"),
     require.resolve("./keepaliveEx")

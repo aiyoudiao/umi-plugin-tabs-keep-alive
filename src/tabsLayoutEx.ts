@@ -2,7 +2,9 @@ import { IApi } from 'umi';
 import { logger } from '@umijs/utils';
 
 export default (api: IApi) => {
-  api.logger.info('Use umi plugin tabsLayoutEx');
+  api.logger.info(
+    'Use umi plugin [umi-plugin-tabs-keep-alive] -> tabsLayoutEx',
+  );
 
   api.describe({
     key: 'tabsLayoutEx',
@@ -24,7 +26,8 @@ export default (api: IApi) => {
   // 注册runtime配置
   api.addRuntimePluginKey(() => ['tabsLayoutEx', 'getCustomTabs']);
   // only dev or build running
-  if (!['dev', 'build', 'dev-config', 'preview', 'setup'].includes(api.name)) return;
+  if (!['dev', 'build', 'dev-config', 'preview', 'setup'].includes(api.name))
+    return;
 
   // 只是为了增加一个 tabsLayout 的配置开关，逻辑在 keepalive 插件中实现
   api.onStart(() => {

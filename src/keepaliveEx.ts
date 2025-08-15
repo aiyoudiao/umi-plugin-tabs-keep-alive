@@ -12,7 +12,7 @@ const DIR_NAME = 'plugin-keepaliveEx';
 // dropByCacheKey('/list');
 type KeepAliveType = (string | RegExp)[];
 export default (api: IApi) => {
-  api.logger.info('Use umi plugin KeepAliveEx');
+  api.logger.info('Use umi plugin [umi-plugin-tabs-keep-alive] -> KeepAliveEx');
   // 和 tabsLayoutEx 插件组合使用
   const { tabsLayoutEx } = api.userConfig;
 
@@ -30,7 +30,7 @@ export default (api: IApi) => {
   // only dev or build running
   if (
     !['dev', 'build', 'dev-config', 'preview', 'setup', 'setup'].includes(
-      api.name
+      api.name,
     )
   )
     return;
@@ -46,7 +46,7 @@ export default (api: IApi) => {
   api.onGenerateFiles(() => {
     const contextTpl = readFileSync(
       join(__dirname, '.', 'templates', 'context.tpl'),
-      'utf-8'
+      'utf-8',
     );
     const hasInitialStatePlugin = api.config.initialState;
 
@@ -66,7 +66,7 @@ export default (api: IApi) => {
     });
     const runtimeTpl = readFileSync(
       join(__dirname, '.', 'templates', 'runtime.tpl'),
-      'utf-8'
+      'utf-8',
     );
     api.writeTmpFile({
       path: `${DIR_NAME}/runtime.tsx`,
@@ -74,7 +74,7 @@ export default (api: IApi) => {
       content: Mustache.render(runtimeTpl, {
         hasTabsLayout: !!tabsLayoutEx,
         keepaliveEx: configStringify(
-          (api.userConfig.keepaliveEx as KeepAliveType) || []
+          (api.userConfig.keepaliveEx as KeepAliveType) || [],
         ),
         hasGetKeepalive: api.appData.appJS?.exports.includes('getKeepAlive'),
       }),

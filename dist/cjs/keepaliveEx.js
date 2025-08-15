@@ -28,7 +28,7 @@ var import_path = require("path");
 var import_checkAntd = require("./utils/checkAntd");
 var DIR_NAME = "plugin-keepaliveEx";
 var keepaliveEx_default = (api) => {
-  api.logger.info("Use umi plugin KeepAliveEx");
+  api.logger.info("Use umi plugin [umi-plugin-tabs-keep-alive] -> KeepAliveEx");
   const { tabsLayoutEx } = api.userConfig;
   api.describe({
     key: "keepaliveEx",
