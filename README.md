@@ -55,6 +55,20 @@ export default {
 export const getCustomTabs = () => (props: TabsLayoutProps) => <TabsLayout {...props} />
 ```
 
+在 你的 layout 组件 或 容器组件中使用 `MaxTabsLayout` 组件，不用再写 chilren 了。
+
+```tsx
+import { MaxTabsLayout } from '@umijs/max';
+
+export const BasicLayout: RunTimeLayoutConfig = ({ initialState }: InitDataType) => {
+  return {
+    // ...
+    childrenRender: () => <MaxTabsLayout />,
+    // ...
+  }
+}
+```
+
 ## 📬 反馈与支持
 
 * 发现了 bug？请在 [GitHub Issues](https://github.com/aiyoudiao/umi-plugin-tabs-keep-alive/issues) 提交

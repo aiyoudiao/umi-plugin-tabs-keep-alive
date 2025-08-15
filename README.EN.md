@@ -58,6 +58,21 @@ In your `app.ts`, add your custom TabsLayout:
 export const getCustomTabs = () => (props: TabsLayoutProps) => <TabsLayout {...props} />
 ```
 
+In your layout component or container component, use the MaxTabsLayout component — you no longer need to write children.
+
+```tsx
+import { MaxTabsLayout } from '@umijs/max';
+
+export const BasicLayout: RunTimeLayoutConfig = ({ initialState }: InitDataType) => {
+  return {
+    // ...
+    childrenRender: () => <MaxTabsLayout />,
+    // ...
+  }
+}
+```
+
+
 ## 📬 Feedback & Support
 
 * Found a bug? Open an issue on [GitHub](https://github.com/aiyoudiao/umi-plugin-tabs-keep-alive/issues)
