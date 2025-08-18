@@ -80,3 +80,33 @@ export const BasicLayout: RunTimeLayoutConfig = ({ initialState }: InitDataType)
 🌟 感谢使用 `umi-plugin-tabs-keep-alive`！祝您使用愉快！🎉
 
 感谢原 umi 内置插件的开源项目：[@alita/plugins](https://github.com/alitajs/alita/tree/master/packages/plugins)
+
+
+## 新增功能
+
+### 1.`replaceTab`
+替换指定路由对应的标签页，并移除原有的标签页。  
+替换操作基于精确路径进行。
+
+```tsx
+replaceTab('/old/path', '/new/path'); 
+// 将当前标签页替换为 /new/path，并移除 /old/path 对应的标签页
+
+replaceTab('/path'); 
+// 将当前标签页替换为 /path
+````
+
+### 2.`replaceTabByRouter`
+
+替换指定路由对应的标签页，并移除原有的标签页。
+替换操作基于定义的路由规则进行。
+
+```tsx
+replaceTabByRouter('/test/path/123', '/test/path:id'); 
+// 将 /test/path:id 匹配到的标签页替换为 /test/path/123
+// 并移除原有的 /test/path:id 标签页
+
+replaceTabByRouter('/path'); 
+// 如果未传递 router 参数，则直接打开 /path
+```
+
