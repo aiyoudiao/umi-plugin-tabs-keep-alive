@@ -98,6 +98,12 @@ export function closeTab(path: string) {
 export function closeAllTabs() {
   keepaliveEmitter.emit({type:'closeAllTabs'});
 }
+export function replaceTab(path: string) {
+  keepaliveEmitter.emit({
+    type: 'replaceTab',
+    payload: { path }
+  });
+}
 `,
     });
     // index.ts for export
@@ -106,7 +112,7 @@ export function closeAllTabs() {
       path: `${DIR_NAME}/index.tsx`,
       content: `
 export { KeepAliveContext,useKeepOutlets, MaxTabsLayout } from './context';
-export { dropByCacheKey, closeTab, closeAllTabs } from './support';
+export { dropByCacheKey, closeTab, closeAllTabs, replaceTab } from './support';
 `,
     });
   });

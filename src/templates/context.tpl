@@ -49,6 +49,7 @@ export interface KeepAliveContextProps {
   dropOtherTabs: (path: string) => void,
   refreshTab: (path: string) => void,
   updateTab: (path: string, config: TabConfig) => void,
+  replaceTab: (newPath: string) => void,
 {{/hasTabsLayout}}
 }
 
@@ -185,7 +186,7 @@ export function useKeepOutlets() {
     const closeTab = (targetKey:string) => {
       const pathList = Object.keys(keepElements.current)
           if (pathList.length === 1) {
-            message.info('至少要保留一个窗口')
+            message?.info?.('至少要保留一个窗口')
             return
           }
           dropByCacheKey(targetKey?.toLowerCase())
@@ -203,6 +204,13 @@ export function useKeepOutlets() {
       pathList.forEach(targetKey => {
         dropByCacheKey(targetKey?.toLowerCase());
       });
+    };
+    const replaceTab = (newPath: string) => {
+      const currentPath = window.location?.pathname?.toLowerCase();
+      if (currentPath) {
+        dropByCacheKey(currentPath); // 先关闭当前 tab
+      }
+      navigate(newPath); // 再跳转到新 tab
     };
     const navigate = useNavigate();
     {{#isPluginModelEnable}}
@@ -283,6 +291,9 @@ export function useKeepOutlets() {
               break;
             case 'closeAllTabs':
               closeAllTabs();
+              break;
+            case 'replaceTab':
+              replaceTab(payload?.path?.toLowerCase());
               break;
 {{/hasTabsLayout}}
           default:
