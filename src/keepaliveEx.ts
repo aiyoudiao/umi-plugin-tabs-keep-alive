@@ -98,10 +98,16 @@ export function closeTab(path: string) {
 export function closeAllTabs() {
   keepaliveEmitter.emit({type:'closeAllTabs'});
 }
-export function replaceTab(path: string) {
+export function replaceTab(path1: string, path2?: string) {
   keepaliveEmitter.emit({
     type: 'replaceTab',
-    payload: { path }
+    payload: { path1, path2 }
+  });
+}
+export function replaceTabByRouter(path: string, myRouter: string) {
+  keepaliveEmitter.emit({
+    type: 'replaceTabByRouter',
+    payload: { path, myRouter }
   });
 }
 `,
@@ -112,7 +118,7 @@ export function replaceTab(path: string) {
       path: `${DIR_NAME}/index.tsx`,
       content: `
 export { KeepAliveContext,useKeepOutlets, MaxTabsLayout } from './context';
-export { dropByCacheKey, closeTab, closeAllTabs, replaceTab } from './support';
+export { dropByCacheKey, closeTab, closeAllTabs, replaceTab, replaceTabByRouter } from './support';
 `,
     });
   });

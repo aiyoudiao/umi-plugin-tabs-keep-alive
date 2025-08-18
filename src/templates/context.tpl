@@ -205,13 +205,71 @@ export function useKeepOutlets() {
         dropByCacheKey(targetKey?.toLowerCase());
       });
     };
-    const replaceTab = (newPath: string) => {
-      const currentPath = window.location?.pathname?.toLowerCase();
-      if (currentPath) {
-        dropByCacheKey(currentPath); // 先关闭当前 tab
+
+    /**
+     * NOTE 新增一个替换路径的方法， 将指定路径替换成新路径，且保持原 tab 位置
+     * @param path1 路径 1，可跳转的路径，必填
+     * @param path2 路径 2，可选。
+     *     - 如果不传，则对当前 tab 的路径进行替换，替换为 path 1
+     *     - 如果传入，则将 path 1 tab 替换为 path 2，且保持原 tab 的位置
+     */
+    const replaceTab = (path1: string, path2?: string) => {
+      let oldTabPath = path1;
+      let newTabPath = path2;
+
+      if(!oldTabPath) {
+        throw new Error('replaceTab 方法必须传入 path1，否则无法跳转');
       }
-      navigate(newPath); // 再跳转到新 tab
+
+      // 如果没有传入 newPath，则 oldTabPath 使用当前路径, newTabPath 使用 oldPath
+      if (!newTabPath) {
+        newTabPath = oldTabPath
+        oldTabPath = window.location?.pathname?.toLowerCase();
+      }
+
+      const oldIndex = keepElements.current?.[oldTabPath]?.index;
+
+      if(oldIndex === undefined) {
+        throw new Error('replaceTab 方法传入 path1 不在 tab 列表中，无法进行替换');
+      }
+
+      if (oldTabPath) {
+        dropByCacheKey(oldTabPath); // 先关闭当前 tab
+      }
+
+      window.__UMI_MAX_KEEP_ALIVE_TAB_INDEX__ = oldIndex;
+
+      try {
+        navigate(newTabPath);
+      } finally {
+        window.__UMI_MAX_KEEP_ALIVE_TAB_INDEX__ = undefined;
+      }
     };
+
+    /**
+     * NOTE 根据路由的路径选择器去匹配替换的路径
+     * @param path
+     * @param myRouter
+     */
+    const replaceTabByRouter = (path: string, myRouter?: string) => {
+      if(!myRouter) {
+        navigate(path);
+        return;
+      }
+
+      const pathList = Object.keys(keepElements.current);
+      const matchedPath = pathList.find(item => {
+        return matchPath(myRouter, item);
+      });
+
+      if(!matchedPath) {
+        navigate(path);
+        return;
+      }
+
+      replaceTab(matchedPath, path);
+    }
+
     const navigate = useNavigate();
     {{#isPluginModelEnable}}
     const localConfig = React.useMemo(() => {
@@ -293,7 +351,10 @@ export function useKeepOutlets() {
               closeAllTabs();
               break;
             case 'replaceTab':
-              replaceTab(payload?.path?.toLowerCase());
+              replaceTab(payload?.path1?.toLowerCase(), payload?.path2?.toLowerCase());
+              break;
+            case 'replaceTabByRouter':
+              replaceTabByRouter(payload?.path?.toLowerCase(), payload?.myRouter);
               break;
 {{/hasTabsLayout}}
           default:
@@ -302,26 +363,53 @@ export function useKeepOutlets() {
       });
     },[])
     const isKeep = isKeepPath(keepalive, location.pathname?.toLowerCase(), routeConfig);
-    if (isKeep && !keepElements.current[location.pathname?.toLowerCase()]) {
-      const currentIndex = Object.keys(keepElements.current).length;
-      {{#hasTabsLayout}}
-      let icon = getMatchPathName(location.pathname, localConfigIcon);
-      if(typeof icon === 'string') icon = '';
+    try {
+      // NOTE 每一次路径变更，都将缓存的路径索引进行重新梳理
+      if (isKeep) {
+        let open = false;
+        Object.keys(keepElements.current).forEach((key, index) => {
+          if (index === window.__UMI_MAX_KEEP_ALIVE_TAB_INDEX__) {
+            open = true;
+          }
+          keepElements.current[key].index = open ? index + 1 : index;
+        });
+      }
 
-      const defaultName = getMatchPathName(location.pathname, local);
-      // 国际化使用 pro 的约定
-      const name = intl.formatMessage({ id: `menu${location.pathname.replaceAll('/', '.')}`, defaultMessage: defaultName });
-      {{/hasTabsLayout}}
-      keepElements.current[location.pathname?.toLowerCase()] = {
-        children: element,
-        index: currentIndex,
-        {{#hasTabsLayout}}
-        name,
-        icon,
-        closable: true, // 默认是true
-        location,
-        {{/hasTabsLayout}}
-      };
+      if (isKeep && !keepElements.current[location.pathname?.toLowerCase()]) {
+        // NOTE 检测一下是否需要进行 tab 替换的操作
+        let currentIndex = Object.keys(keepElements.current).length;
+        if (window.__UMI_MAX_KEEP_ALIVE_TAB_INDEX__ !== undefined) {
+          currentIndex = window.__UMI_MAX_KEEP_ALIVE_TAB_INDEX__;
+          window.replaceTabMode = undefined;
+          window.__UMI_MAX_KEEP_ALIVE_TAB_INDEX__ = undefined;
+        }
+        let icon = getMatchPathName(location.pathname, localConfigIcon);
+        if (typeof icon === 'string') icon = '';
+
+        const defaultName = getMatchPathName(location.pathname, local);
+        // 国际化使用 pro 的约定
+        const name = intl.formatMessage({
+          id: `menu${location.pathname.replaceAll('/', '.')}`,
+          defaultMessage: defaultName,
+        });
+        keepElements.current[location.pathname?.toLowerCase()] = {
+          children: element,
+          index: currentIndex,
+          name,
+          icon,
+          closable: true, // 默认是true
+          location,
+        };
+
+        // 根据索引，重新排列 keepElements.current 的键值对位置，从而实现替换路径时对应 tab 的位置得到保持
+        const newKeepElements = Object.entries(keepElements.current).sort(
+          ([, a], [, b]) => a.index - b.index,
+        );
+
+        keepElements.current = Object.fromEntries(newKeepElements);
+      }
+    } finally {
+      window.__UMI_MAX_KEEP_ALIVE_TAB_INDEX__ = undefined;
     }
 {{^hasCustomTabs}}
 {{#hasTabsLayout}}
