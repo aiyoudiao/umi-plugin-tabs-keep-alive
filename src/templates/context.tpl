@@ -241,8 +241,9 @@ export function useKeepOutlets() {
 
       try {
         navigate(newTabPath);
-      } finally {
+      } catch (e){
         window.__UMI_MAX_KEEP_ALIVE_TAB_INDEX__ = undefined;
+        throw e;
       }
     };
 
