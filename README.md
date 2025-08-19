@@ -114,3 +114,15 @@ replaceTabByRouter('/path');
 // 如果未传递 router 参数，则直接打开 /path
 ```
 
+### 3.`swapTab`
+
+将两个指定路径对应的标签页互换位置。  
+在实现标签页拖拽功能时，可以通过该 API 轻松完成标签页位置的调整。
+
+```tsx
+import { swapTab } from '@umijs/max';
+
+swapTab('/test/path1', '/test/path2'); 
+// 将 /test/path1 与 /test/path2 对应的标签页互换位置
+// 常见场景：拖拽标签页结束后更新标签页顺序
+```

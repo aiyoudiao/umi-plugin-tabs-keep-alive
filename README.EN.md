@@ -119,3 +119,16 @@ replaceTabByRouter('/test/path/123', '/test/path:id');
 replaceTabByRouter('/path'); 
 // If no router is provided, the route /path is opened directly
 ```
+
+### 3.`swapTab`
+
+Swaps the positions of two tabs specified by their routes.  
+This API is particularly useful when implementing tab drag-and-drop functionality, allowing you to easily update tab order.
+
+```tsx
+import { swapTab } from '@umijs/max';
+
+swapTab('/test/path1', '/test/path2'); 
+// Swaps the positions of the tabs for /test/path1 and /test/path2
+// Common use case: update tab order after drag-and-drop interaction
+```

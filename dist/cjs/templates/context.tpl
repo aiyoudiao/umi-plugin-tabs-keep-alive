@@ -182,6 +182,9 @@ export function useKeepOutlets() {
     const route = findRouteByPath(location.pathname?.toLowerCase(),clientRoutes);
     const routeConfig = {...route,...(routes[route?.id]||{})};
 
+    // 通过这个 flag 来完成 tabs 的强制刷新
+    const [updateFlag, setUpdateFlag] = React.useState(null);
+
 {{#hasTabsLayout}}
     const closeTab = (targetKey:string) => {
       const pathList = Object.keys(keepElements.current)
@@ -271,6 +274,32 @@ export function useKeepOutlets() {
       replaceTab(matchedPath, path);
     }
 
+    /**
+     * NOTE 将两个指定路径的 tab 互换位置
+     * @param path1 的 Tab 路径
+     * @param path2 的 Tab 路径
+     */
+    const swapTab = (path1: string, path2: string) => {
+      const path1Index = keepElements.current?.[path1]?.index;
+      const path2Index = keepElements.current?.[path2]?.index;
+
+      if ([path1Index, path2Index].includes(undefined)) {
+        throw new Error('swapTab 方法传入的路径不在 tab 列表中，无法进行交换');
+      }
+
+      keepElements.current[path1].index = path2Index;
+      keepElements.current[path2].index = path1Index;
+
+      // 根据索引，重新排列 keepElements.current 的键值对位置，从而实现替换路径时对应 tab 的位置得到保持
+      const newKeepElements = Object.entries(keepElements.current).sort(
+          ([, a], [, b]) => a.index - b.index,
+      );
+
+      keepElements.current = Object.fromEntries(newKeepElements);
+
+      setUpdateFlag(Date.now()); // 更新状态，触发重新渲染
+    }
+
     const navigate = useNavigate();
     {{#isPluginModelEnable}}
     const localConfig = React.useMemo(() => {
@@ -356,6 +385,9 @@ export function useKeepOutlets() {
               break;
             case 'replaceTabByRouter':
               replaceTabByRouter(payload?.path?.toLowerCase(), payload?.myRouter);
+              break;
+            case 'swapTab':
+              swapTab(payload?.path1?.toLowerCase(), payload?.path2?.toLowerCase());
               break;
 {{/hasTabsLayout}}
           default:
@@ -471,7 +503,8 @@ export function useKeepOutlets() {
         icons: localConfig.icon,
         activeKey: location.pathname?.toLowerCase(),
         tabProps,
-        tabNameMap
+        tabNameMap,
+        updateFlag
     }
 {{/hasCustomTabs}}
     return <>

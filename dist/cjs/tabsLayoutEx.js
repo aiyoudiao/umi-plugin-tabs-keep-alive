@@ -24,9 +24,7 @@ __export(tabsLayoutEx_exports, {
 module.exports = __toCommonJS(tabsLayoutEx_exports);
 var import_utils = require("@umijs/utils");
 var tabsLayoutEx_default = (api) => {
-  api.logger.info(
-    "Use umi plugin [umi-plugin-tabs-keep-alive] -> tabsLayoutEx"
-  );
+  api.logger.info("Use umi plugin [umi-plugin-tabs-keep-alive] -> tabsLayoutEx");
   api.describe({
     key: "tabsLayoutEx",
     config: {
