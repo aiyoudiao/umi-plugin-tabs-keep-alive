@@ -95,6 +95,8 @@ Replaces the tab corresponding to a specified route and removes the original tab
 The replacement is performed using the exact path.
 
 ```tsx
+import { replaceTab } from '@umijs/max';
+
 replaceTab('/old/path', '/new/path'); 
 // Replaces the current tab with /new/path and removes the tab for /old/path
 
@@ -108,6 +110,8 @@ Replaces the tab corresponding to a specified route and removes the original tab
 The replacement is performed using the defined router.
 
 ```tsx
+import { replaceTabByRouter } from '@umijs/max';
+
 replaceTabByRouter('/test/path/123', '/test/path:id'); 
 // Replaces the tab matched by /test/path:id with /test/path/123 
 // and removes the original /test/path:id tab

@@ -89,6 +89,8 @@ export const BasicLayout: RunTimeLayoutConfig = ({ initialState }: InitDataType)
 替换操作基于精确路径进行。
 
 ```tsx
+import { replaceTab } from '@umijs/max';
+
 replaceTab('/old/path', '/new/path'); 
 // 将当前标签页替换为 /new/path，并移除 /old/path 对应的标签页
 
@@ -102,6 +104,8 @@ replaceTab('/path');
 替换操作基于定义的路由规则进行。
 
 ```tsx
+import { replaceTabByRouter } from '@umijs/max';
+
 replaceTabByRouter('/test/path/123', '/test/path:id'); 
 // 将 /test/path:id 匹配到的标签页替换为 /test/path/123
 // 并移除原有的 /test/path:id 标签页
