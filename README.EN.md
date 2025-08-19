@@ -21,11 +21,11 @@ Install via your preferred package manager:
 
 ```bash
 # Using pnpm
-pnpm i umi-plugin-tabs-keep-alive
+pnpm i umi-plugin-tabs-keep-alive@latest
 # Using npm
-npm install umi-plugin-tabs-keep-alive --save-dev
+npm install umi-plugin-tabs-keep-alive@latest --save-dev
 # Using yarn
-yarn add umi-plugin-tabs-keep-alive --dev
+yarn add umi-plugin-tabs-keep-alive@latest --dev
 ````
 
 ## 🔨 Usage

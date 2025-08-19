@@ -18,11 +18,11 @@ umi max 中自带的 keepalive 和 tabsLayout 不好用，时不时在控制台�
 
 ```bash
 # 使用 pnpm
-pnpm i umi-plugin-tabs-keep-alive
+pnpm i umi-plugin-tabs-keep-alive@latest
 # 或使用 npm
-npm install umi-plugin-tabs-keep-alive --save-dev
+npm install umi-plugin-tabs-keep-alive@latest --save-dev
 # 或使用 yarn
-yarn add umi-plugin-tabs-keep-alive --dev
+yarn add umi-plugin-tabs-keep-alive@latest --dev
 ````
 
 ## 🔨 使用
