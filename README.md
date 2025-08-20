@@ -126,3 +126,46 @@ swapTab('/test/path1', '/test/path2');
 // 将 /test/path1 与 /test/path2 对应的标签页互换位置
 // 常见场景：拖拽标签页结束后更新标签页顺序
 ```
+
+
+### 4.`moveBeforeTab`
+
+将指定路径的标签页移动到目标路径标签页之前。  
+在实现标签页拖拽功能时，可以通过该 API 轻松调整标签页顺序。
+
+```tsx
+import { moveBeforeTab } from '@umijs/max';
+
+moveBeforeTab('/test/path1', '/test/path2'); 
+// 将 /test/path1 对应的标签页移动到 /test/path2 对应的标签页之前
+// 常见场景：拖拽标签页结束后更新标签页顺序
+````
+
+
+### 5.`moveAfterTab`
+
+将指定路径的标签页移动到目标路径标签页之后。
+在实现标签页拖拽功能时，可以通过该 API 轻松调整标签页顺序。
+
+```tsx
+import { moveAfterTab } from '@umijs/max';
+
+moveAfterTab('/test/path1', '/test/path2'); 
+// 将 /test/path1 对应的标签页移动到 /test/path2 对应的标签页之后
+// 常见场景：拖拽标签页结束后更新标签页顺序
+```
+
+
+### 6.`moveTab`
+
+将指定路径的标签页移动到目标路径标签页的前面或后面（根据位置自动判断）。
+在实现标签页拖拽功能时，可以通过该 API 轻松调整标签页顺序。
+
+```tsx
+import { moveTab } from '@umijs/max';
+
+moveTab('/test/path1', '/test/path2'); 
+// 如果 /test/path1 当前在目标路径之后，则移动到 /test/path2 之前
+// 如果 /test/path1 当前在目标路径之前，则移动到 /test/path2 之后
+// 常见场景：拖拽标签页结束后更新标签页顺序
+```

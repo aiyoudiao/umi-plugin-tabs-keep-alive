@@ -132,3 +132,46 @@ swapTab('/test/path1', '/test/path2');
 // Swaps the positions of the tabs for /test/path1 and /test/path2
 // Common use case: update tab order after drag-and-drop interaction
 ```
+
+### 4.`moveBeforeTab`
+
+Moves the tab corresponding to the specified route **before** the tab of the target route.  
+This API is useful for adjusting tab order after drag-and-drop operations.
+
+```tsx
+import { moveBeforeTab } from '@umijs/max';
+
+moveBeforeTab('/test/path1', '/test/path2'); 
+// Moves the tab for /test/path1 before the tab for /test/path2
+// Common use case: update tab order after a drag-and-drop interaction
+````
+
+
+### 5.`moveAfterTab`
+
+Moves the tab corresponding to the specified route **after** the tab of the target route.
+This API is useful for adjusting tab order after drag-and-drop operations.
+
+```tsx
+import { moveAfterTab } from '@umijs/max';
+
+moveAfterTab('/test/path1', '/test/path2'); 
+// Moves the tab for /test/path1 after the tab for /test/path2
+// Common use case: update tab order after a drag-and-drop interaction
+```
+
+
+### 6.`moveTab`
+
+Moves the tab corresponding to the specified route **before or after** the tab of the target route (automatically determined).
+If the source tab is currently positioned after the target, it will be moved before it.
+If the source tab is currently positioned before the target, it will be moved after it.
+
+```tsx
+import { moveTab } from '@umijs/max';
+
+moveTab('/test/path1', '/test/path2'); 
+// If /test/path1 is currently after /test/path2, it will be moved before it
+// If /test/path1 is currently before /test/path2, it will be moved after it
+// Common use case: update tab order after a drag-and-drop interaction
+```

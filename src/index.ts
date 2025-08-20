@@ -5,8 +5,5 @@ export default (api: IApi) => {
   api.logger.info('[umi-plugin-tabs-keep-alive] plugin loaded');
 
   // 挂载 tabsLayout 插件
-  api.registerPlugins([
-    require.resolve('./tabsLayoutEx'),
-    require.resolve('./keepaliveEx'),
-  ]);
+  api.registerPlugins([require.resolve('./tabsLayoutEx.ts'), require.resolve('./keepaliveEx.ts')]);
 };
