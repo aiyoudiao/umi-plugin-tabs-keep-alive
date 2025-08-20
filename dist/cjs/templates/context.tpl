@@ -275,6 +275,18 @@ export function useKeepOutlets() {
     }
 
     /**
+     * NOTE 根据每个 tab 的索引来进行排序
+     */
+    const sortTabsByIndex = () => {
+      // 根据索引，重新排列 keepElements.current 的键值对位置，从而实现替换路径时对应 tab 的位置得到保持
+      const newKeepElements = Object.entries(keepElements.current).sort(
+          ([, a], [, b]) => a.index - b.index,
+      );
+
+      keepElements.current = Object.fromEntries(newKeepElements);
+    }
+
+    /**
      * NOTE 将两个指定路径的 tab 互换位置
      * @param path1 的 Tab 路径
      * @param path2 的 Tab 路径
@@ -290,15 +302,92 @@ export function useKeepOutlets() {
       keepElements.current[path1].index = path2Index;
       keepElements.current[path2].index = path1Index;
 
-      // 根据索引，重新排列 keepElements.current 的键值对位置，从而实现替换路径时对应 tab 的位置得到保持
-      const newKeepElements = Object.entries(keepElements.current).sort(
-          ([, a], [, b]) => a.index - b.index,
-      );
-
-      keepElements.current = Object.fromEntries(newKeepElements);
+      sortTabsByIndex();
 
       setUpdateFlag(Date.now()); // 更新状态，触发重新渲染
     }
+
+
+    /**
+     * NOTE 将指定路径的 tab 移动到目标路径之前
+     * @param sourcePath 待移动的 tab 路径
+     * @param targetPath 目标 tab 路径
+     */
+    const moveBeforeTab = (sourcePath: string, targetPath: string) => {
+      const sourcePathIndex = keepElements.current?.[sourcePath]?.index;
+      const targetPathIndex = keepElements.current?.[targetPath]?.index;
+
+      if ([sourcePathIndex, targetPathIndex].includes(undefined)) {
+        throw new Error('moveBeforeTab 方法传入的路径不在 tab 列表中，无法进行移动');
+      }
+
+      // 如果 sourcePathIndex 在 targetPathIndex 之前，则不需要移动
+      if (sourcePathIndex < targetPathIndex) {
+        return;
+      }
+
+      // 将 sourcePathIndex 移动到 targetPathIndex 之前
+      const newSourceIndex = targetPathIndex;
+      Object.keys(keepElements.current).slice(newSourceIndex).forEach((key, index) => {
+          keepElements.current[key].index = newSourceIndex + index + 1
+      });
+      keepElements.current[sourcePath].index = newSourceIndex;
+
+      sortTabsByIndex();
+      setUpdateFlag(Date.now()); // 更新状态，触发重新渲染
+    }
+
+    /**
+     * NOTE 将指定路径的 tab 移动到目标路径之后
+     * @param sourcePath 待移动的 tab 路径
+     * @param targetPath 目标 tab 路径
+     */
+    const moveAfterTab = (sourcePath: string, targetPath: string) => {
+      const sourcePathIndex = keepElements.current?.[sourcePath]?.index;
+      const targetPathIndex = keepElements.current?.[targetPath]?.index;
+
+      if ([sourcePathIndex, targetPathIndex].includes(undefined)) {
+        throw new Error('moveAfterTab 方法传入的路径不在 tab 列表中，无法进行移动');
+      }
+
+      // 如果 sourcePathIndex 在 targetPathIndex 之后，则不需要移动
+      if (sourcePathIndex > targetPathIndex) {
+        return;
+      }
+
+       // 将 sourcePathIndex 移动到 targetPathIndex 之后
+      const newSourceIndex = targetPathIndex + 1;
+      Object.keys(keepElements.current).slice(newSourceIndex).forEach((key, index) => {
+          keepElements.current[key].index = newSourceIndex + index + 1
+      });
+      keepElements.current[sourcePath].index = newSourceIndex;
+
+      sortTabsByIndex();
+      setUpdateFlag(Date.now()); // 更新状态，触发重新渲染
+    }
+
+    /**
+     * NOTE 将指定路径的 tab 移动到目标路径前面或者后面（自动检测，待移动的 tab 位置大于目标位置时，说明往前移动，反之是往后移动）
+     * @param sourcePath 待移动的 tab 路径
+     * @param targetPath 目标 tab 路径
+     */
+    const moveTab = (sourcePath: string, targetPath: string) => {
+      const sourcePathIndex = keepElements.current?.[sourcePath]?.index;
+      const targetPathIndex = keepElements.current?.[targetPath]?.index;
+
+      if ([sourcePathIndex, targetPathIndex].includes(undefined)) {
+        throw new Error('moveTab 方法传入的路径不在 tab 列表中，无法进行移动');
+      }
+
+      // 如果 sourcePathIndex > targetPathIndex，说明往前移动，反之是往后移动
+      const isForward = sourcePathIndex > targetPathIndex;
+
+      if(isForward) {
+        moveBeforeTab(sourcePath, targetPath);
+      } else {
+        moveAfterTab(sourcePath, targetPath);
+      }
+    };
 
     const navigate = useNavigate();
     {{#isPluginModelEnable}}
@@ -389,6 +478,15 @@ export function useKeepOutlets() {
             case 'swapTab':
               swapTab(payload?.path1?.toLowerCase(), payload?.path2?.toLowerCase());
               break;
+            case 'moveTab':
+              moveTab(payload?.sourcePath?.toLowerCase(), payload?.targetPath?.toLowerCase());
+              break;
+            case 'moveBeforeTab':
+              moveBeforeTab(payload?.sourcePath?.toLowerCase(), payload?.targetPath?.toLowerCase());
+              break;
+            case 'moveAfterTab':
+              moveAfterTab(payload?.sourcePath?.toLowerCase(), payload?.targetPath?.toLowerCase());
+              break;
 {{/hasTabsLayout}}
           default:
             break;
@@ -434,12 +532,7 @@ export function useKeepOutlets() {
           location,
         };
 
-        // 根据索引，重新排列 keepElements.current 的键值对位置，从而实现替换路径时对应 tab 的位置得到保持
-        const newKeepElements = Object.entries(keepElements.current).sort(
-          ([, a], [, b]) => a.index - b.index,
-        );
-
-        keepElements.current = Object.fromEntries(newKeepElements);
+        sortTabsByIndex();
       }
     } finally {
       window.__UMI_MAX_KEEP_ALIVE_TAB_INDEX__ = undefined;

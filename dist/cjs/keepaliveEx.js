@@ -97,22 +97,72 @@ export function closeTab(path: string) {
 export function closeAllTabs() {
   keepaliveEmitter.emit({type:'closeAllTabs'});
 }
+/**
+ * NOTE 新增一个替换路径的方法， 将指定路径替换成新路径，且保持原 tab 位置
+ * @param path1 路径 1，可跳转的路径，必填
+ * @param path2 路径 2，可选。
+ *     - 如果不传，则对当前 tab 的路径进行替换，替换为 path 1
+ *     - 如果传入，则将 path 1 tab 替换为 path 2，且保持原 tab 的位置
+ */
 export function replaceTab(path1: string, path2?: string) {
   keepaliveEmitter.emit({
     type: 'replaceTab',
     payload: { path1, path2 }
   });
 }
+/**
+ * NOTE 根据路由的路径选择器去匹配替换的路径
+ * @param path
+ * @param myRouter
+ */
 export function replaceTabByRouter(path: string, myRouter: string) {
   keepaliveEmitter.emit({
     type: 'replaceTabByRouter',
     payload: { path, myRouter }
   });
 }
+/**
+ * NOTE 将两个指定路径的 tab 互换位置
+ * @param path1 的 Tab 路径
+ * @param path2 的 Tab 路径
+ */
 export function swapTab(path1: string, path2: string) {
   keepaliveEmitter.emit({
     type: 'swapTab',
     payload: { path1, path2 }
+  });
+}
+/**
+ * NOTE 将指定路径的 tab 移动到目标路径前面或者后面（自动检测，待移动的 tab 位置大于目标位置时，说明往前移动，反之是往后移动）
+ * @param sourcePath 待移动的 tab 路径
+ * @param targetPath 目标 tab 路径
+ */
+export function moveTab(sourcePath: string, targetPath: string) {
+  keepaliveEmitter.emit({
+    type: 'moveTab',
+    payload: { sourcePath, targetPath }
+  });
+}
+/**
+ * NOTE 将指定路径的 tab 移动到目标路径之前
+ * @param sourcePath 待移动的 tab 路径
+ * @param targetPath 目标 tab 路径
+ */
+export function moveBeforeTab(sourcePath: string, targetPath: string) {
+  keepaliveEmitter.emit({
+    type: 'moveBeforeTab',
+    payload: { sourcePath, targetPath }
+  });
+}
+/**
+ * NOTE 将指定路径的 tab 移动到目标路径之后
+ * @param sourcePath 待移动的 tab 路径
+ * @param targetPath 目标 tab 路径
+ */
+export function moveAfterTab(sourcePath: string, targetPath: string) {
+  keepaliveEmitter.emit({
+    type: 'moveAfterTab',
+    payload: { sourcePath, targetPath }
   });
 }
 `
@@ -122,7 +172,7 @@ export function swapTab(path1: string, path2: string) {
       path: `${DIR_NAME}/index.tsx`,
       content: `
 export { KeepAliveContext,useKeepOutlets, MaxTabsLayout } from './context';
-export { dropByCacheKey, closeTab, closeAllTabs, replaceTab, replaceTabByRouter, swapTab } from './support';
+export { dropByCacheKey, closeTab, closeAllTabs, replaceTab, replaceTabByRouter, swapTab, moveTab, moveBeforeTab, moveAfterTab } from './support';
 `
     });
   });
