@@ -256,22 +256,32 @@ export function useKeepOutlets() {
      * @param myRouter
      */
     const replaceTabByRouter = (path: string, myRouter?: string) => {
-      if(!myRouter) {
-        navigate(path);
-        return;
+      let newPath = path, newMyRouter = myRouter;
+      // 如果没有 router，则使用当前路径为 router
+      if(!newMyRouter) {
+        newMyRouter = path;
       }
 
+      // 开始遍历匹配
       const pathList = Object.keys(keepElements.current);
       const matchedPath = pathList.find(item => {
-        return matchPath(myRouter, item);
+        return matchPath(newMyRouter, item);
       });
 
-      if(!matchedPath) {
-        navigate(path);
+      // 如果两个路径相同，则直接跳转旧的路由
+      if (matchedPath === newPath) {
+        navigate(newPath);
         return;
       }
 
-      replaceTab(matchedPath, path);
+      // 如果未能匹配成功，则新增一个跳转路由
+      if (!matchedPath) {
+        navigate(newPath);
+        return;
+      }
+
+      // 如果匹配成功，则进行替换
+      replaceTab(matchedPath, newPath);
     }
 
     /**

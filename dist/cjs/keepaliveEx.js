@@ -40,7 +40,9 @@ var keepaliveEx_default = (api) => {
     enableBy: api.EnableBy.config
   });
   api.addRuntimePluginKey(() => "getKeepAlive");
-  if (!["dev", "build", "dev-config", "preview", "setup", "setup"].includes(api.name))
+  if (!["dev", "build", "dev-config", "preview", "setup", "setup"].includes(
+    api.name
+  ))
     return;
   const configStringify = (config) => {
     return config.map((item) => {
@@ -52,7 +54,10 @@ var keepaliveEx_default = (api) => {
   };
   api.onGenerateFiles(() => {
     var _a;
-    const contextTpl = (0, import_fs.readFileSync)((0, import_path.join)(__dirname, ".", "templates", "context.tpl"), "utf-8");
+    const contextTpl = (0, import_fs.readFileSync)(
+      (0, import_path.join)(__dirname, ".", "templates", "context.tpl"),
+      "utf-8"
+    );
     const hasInitialStatePlugin = api.config.initialState;
     api.writeTmpFile({
       path: `${DIR_NAME}/context.tsx`,
@@ -68,13 +73,18 @@ var keepaliveEx_default = (api) => {
         isNewDropdownAPISupported: (0, import_checkAntd.checkAntdVersion)(api, "4.23.6", "4.24.0")
       })
     });
-    const runtimeTpl = (0, import_fs.readFileSync)((0, import_path.join)(__dirname, ".", "templates", "runtime.tpl"), "utf-8");
+    const runtimeTpl = (0, import_fs.readFileSync)(
+      (0, import_path.join)(__dirname, ".", "templates", "runtime.tpl"),
+      "utf-8"
+    );
     api.writeTmpFile({
       path: `${DIR_NAME}/runtime.tsx`,
       noPluginDir: true,
       content: import_utils.Mustache.render(runtimeTpl, {
         hasTabsLayout: !!tabsLayoutEx,
-        keepaliveEx: configStringify(api.userConfig.keepaliveEx || []),
+        keepaliveEx: configStringify(
+          api.userConfig.keepaliveEx || []
+        ),
         hasGetKeepalive: (_a = api.appData.appJS) == null ? void 0 : _a.exports.includes("getKeepAlive")
       })
     });
@@ -115,7 +125,7 @@ export function replaceTab(path1: string, path2?: string) {
  * @param path
  * @param myRouter
  */
-export function replaceTabByRouter(path: string, myRouter: string) {
+export function replaceTabByRouter(path: string, myRouter?: string) {
   keepaliveEmitter.emit({
     type: 'replaceTabByRouter',
     payload: { path, myRouter }
@@ -176,5 +186,7 @@ export { dropByCacheKey, closeTab, closeAllTabs, replaceTab, replaceTabByRouter,
 `
     });
   });
-  api.addRuntimePlugin(() => [(0, import_path.join)(api.paths.absTmpPath, `${DIR_NAME}/runtime.tsx`)]);
+  api.addRuntimePlugin(() => [
+    (0, import_path.join)(api.paths.absTmpPath, `${DIR_NAME}/runtime.tsx`)
+  ]);
 };

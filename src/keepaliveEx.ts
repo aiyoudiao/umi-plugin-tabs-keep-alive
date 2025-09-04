@@ -28,7 +28,12 @@ export default (api: IApi) => {
   api.addRuntimePluginKey(() => 'getKeepAlive');
 
   // only dev or build running
-  if (!['dev', 'build', 'dev-config', 'preview', 'setup', 'setup'].includes(api.name)) return;
+  if (
+    !['dev', 'build', 'dev-config', 'preview', 'setup', 'setup'].includes(
+      api.name,
+    )
+  )
+    return;
 
   const configStringify = (config: (string | RegExp)[]) => {
     return config.map((item) => {
@@ -39,7 +44,10 @@ export default (api: IApi) => {
     });
   };
   api.onGenerateFiles(() => {
-    const contextTpl = readFileSync(join(__dirname, '.', 'templates', 'context.tpl'), 'utf-8');
+    const contextTpl = readFileSync(
+      join(__dirname, '.', 'templates', 'context.tpl'),
+      'utf-8',
+    );
     const hasInitialStatePlugin = api.config.initialState;
 
     api.writeTmpFile({
@@ -56,13 +64,18 @@ export default (api: IApi) => {
         isNewDropdownAPISupported: checkAntdVersion(api, '4.23.6', '4.24.0'),
       }),
     });
-    const runtimeTpl = readFileSync(join(__dirname, '.', 'templates', 'runtime.tpl'), 'utf-8');
+    const runtimeTpl = readFileSync(
+      join(__dirname, '.', 'templates', 'runtime.tpl'),
+      'utf-8',
+    );
     api.writeTmpFile({
       path: `${DIR_NAME}/runtime.tsx`,
       noPluginDir: true,
       content: Mustache.render(runtimeTpl, {
         hasTabsLayout: !!tabsLayoutEx,
-        keepaliveEx: configStringify((api.userConfig.keepaliveEx as KeepAliveType) || []),
+        keepaliveEx: configStringify(
+          (api.userConfig.keepaliveEx as KeepAliveType) || [],
+        ),
         hasGetKeepalive: api.appData.appJS?.exports.includes('getKeepAlive'),
       }),
     });
@@ -103,7 +116,7 @@ export function replaceTab(path1: string, path2?: string) {
  * @param path
  * @param myRouter
  */
-export function replaceTabByRouter(path: string, myRouter: string) {
+export function replaceTabByRouter(path: string, myRouter?: string) {
   keepaliveEmitter.emit({
     type: 'replaceTabByRouter',
     payload: { path, myRouter }
@@ -166,5 +179,7 @@ export { dropByCacheKey, closeTab, closeAllTabs, replaceTab, replaceTabByRouter,
     });
   });
 
-  api.addRuntimePlugin(() => [join(api.paths.absTmpPath!, `${DIR_NAME}/runtime.tsx`)]);
+  api.addRuntimePlugin(() => [
+    join(api.paths.absTmpPath!, `${DIR_NAME}/runtime.tsx`),
+  ]);
 };
