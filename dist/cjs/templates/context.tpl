@@ -11,6 +11,7 @@ import { EllipsisOutlined, VerticalRightOutlined, VerticalLeftOutlined, CloseOut
 import { getPluginManager } from '../core/plugin';
 {{/hasTabsLayout}}
 {{#hasCustomTabs}}
+import { message } from "antd";
 import { getCustomTabs } from '@/app';
 {{/hasCustomTabs}}
 {{#isPluginModelEnable}}
