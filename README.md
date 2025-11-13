@@ -87,21 +87,27 @@ export const BasicLayout: RunTimeLayoutConfig = ({ initialState }: InitDataType)
 ### 1.`replaceTab`
 替换指定路由对应的标签页，并移除原有的标签页。  
 替换操作基于精确路径进行。
+支持不跳转到你想替换的标签页。
 
 ```tsx
 import { replaceTab } from '@umijs/max';
 
 replaceTab('/old/path', '/new/path'); 
 // 将当前标签页替换为 /new/path，并移除 /old/path 对应的标签页
+// 如果只是替换一个标签页，但是不激活（跳转）该标签页，可以使用该 API
+replaceTab('/test/path/123', '/new/path', true); 
 
 replaceTab('/path'); 
 // 将当前标签页替换为 /path
+// 如果只是替换一个标签页，但是不激活（跳转）该标签页，可以使用该 API
+replaceTab('/test/path/123', undefined, true); 
 ````
 
 ### 2.`replaceTabByRouter`
 
 替换指定路由对应的标签页，并移除原有的标签页。
 替换操作基于定义的路由规则进行。
+支持不跳转到你新增的标签页。
 
 ```tsx
 import { replaceTabByRouter } from '@umijs/max';
@@ -109,9 +115,14 @@ import { replaceTabByRouter } from '@umijs/max';
 replaceTabByRouter('/test/path/123', '/test/path:id'); 
 // 将 /test/path:id 匹配到的标签页替换为 /test/path/123
 // 并移除原有的 /test/path:id 标签页
+// 如果只是新增一个标签页，但是不激活（跳转）该标签页，可以使用该 API
+replaceTabByRouter('/test/path/123', '/test/path:id', true); 
+
 
 replaceTabByRouter('/path'); 
 // 如果未传递 router 参数，则直接打开 /path
+// 如果只是新增一个标签页，但是不激活（跳转）该标签页，可以使用该 API
+replaceTabByRouter('/path', undefined, true);
 ```
 
 ### 3.`swapTab`
@@ -168,4 +179,14 @@ moveTab('/test/path1', '/test/path2');
 // 如果 /test/path1 当前在目标路径之后，则移动到 /test/path2 之前
 // 如果 /test/path1 当前在目标路径之前，则移动到 /test/path2 之后
 // 常见场景：拖拽标签页结束后更新标签页顺序
+```
+
+### 7.`getTabList`
+
+获取当前所有存在的标签页列表路径。
+```tsx
+import { getTabList } from '@umijs/max';
+const tabs = getTabList();
+console.log(tabs);
+// 输出当前所有存在的标签页列表路径
 ```

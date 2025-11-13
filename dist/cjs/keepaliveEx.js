@@ -113,22 +113,24 @@ export function closeAllTabs() {
  * @param path2 路径 2，可选。
  *     - 如果不传，则对当前 tab 的路径进行替换，替换为 path 1
  *     - 如果传入，则将 path 1 tab 替换为 path 2，且保持原 tab 的位置
+ * @param isStayCurrentTab 是否保持在当前 tab 不跳转，默认 false，替换后会跳转到新的 tab
  */
-export function replaceTab(path1: string, path2?: string) {
+export function replaceTab(path1: string, path2?: string, isStayCurrentTab: boolean = false) {
   keepaliveEmitter.emit({
     type: 'replaceTab',
-    payload: { path1, path2 }
+    payload: { path1, path2, isStayCurrentTab }
   });
 }
 /**
  * NOTE 根据路由的路径选择器去匹配替换的路径
  * @param path
  * @param myRouter
+ * @param isStayCurrentTab 是否保持在当前 tab 不跳转，默认 false，替换后会跳转到新的 tab
  */
-export function replaceTabByRouter(path: string, myRouter?: string) {
+export function replaceTabByRouter(path: string, myRouter?: string, isStayCurrentTab: boolean = false) {
   keepaliveEmitter.emit({
     type: 'replaceTabByRouter',
-    payload: { path, myRouter }
+    payload: { path, myRouter, isStayCurrentTab }
   });
 }
 /**
@@ -175,6 +177,15 @@ export function moveAfterTab(sourcePath: string, targetPath: string) {
     payload: { sourcePath, targetPath }
   });
 }
+/**
+ * NOTE 获取当前所有缓存的 tab 的路径
+ */
+export function getTabList() {
+  keepaliveEmitter.emit({
+    type: 'getTabList',
+    payload: {}
+  });
+}
 `
     });
     api.writeTmpFile({
@@ -182,7 +193,7 @@ export function moveAfterTab(sourcePath: string, targetPath: string) {
       path: `${DIR_NAME}/index.tsx`,
       content: `
 export { KeepAliveContext,useKeepOutlets, MaxTabsLayout } from './context';
-export { dropByCacheKey, closeTab, closeAllTabs, replaceTab, replaceTabByRouter, swapTab, moveTab, moveBeforeTab, moveAfterTab } from './support';
+export { dropByCacheKey, closeTab, closeAllTabs, replaceTab, replaceTabByRouter, swapTab, moveTab, moveBeforeTab, moveAfterTab, getTabList } from './support';
 `
     });
   });

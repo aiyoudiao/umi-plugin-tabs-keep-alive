@@ -91,33 +91,46 @@ Thanks also to the original open-source project for the Umi built-in plugin: [@a
 ## New Features
 
 ### 1.`replaceTab`
-Replaces the tab corresponding to a specified route and removes the original tab.  
-The replacement is performed using the exact path.
+
+Replace the tab corresponding to a specified route and remove the original tab.  
+The replacement is performed based on the exact path.  
+Supports replacing without navigating to the new tab.
 
 ```tsx
 import { replaceTab } from '@umijs/max';
 
+// Replace the current tab with /new/path and remove the tab corresponding to /old/path
 replaceTab('/old/path', '/new/path'); 
-// Replaces the current tab with /new/path and removes the tab for /old/path
 
+// Replace a tab without activating (navigating to) it
+replaceTab('/test/path/123', '/new/path', true); 
+
+// Replace the current tab with /path
 replaceTab('/path'); 
-// Replaces the current tab with /path
+
+// Replace a tab without activating (navigating to) it
+replaceTab('/test/path/123', undefined, true);
 ````
 
 ### 2.`replaceTabByRouter`
 
-Replaces the tab corresponding to a specified route and removes the original tab.
-The replacement is performed using the defined router.
+Replace the tab corresponding to a specified route and remove the original tab.  
+The replacement is based on the defined routing rules.  
+Supports not navigating to the newly added tab.
 
 ```tsx
 import { replaceTabByRouter } from '@umijs/max';
 
 replaceTabByRouter('/test/path/123', '/test/path:id'); 
-// Replaces the tab matched by /test/path:id with /test/path/123 
-// and removes the original /test/path:id tab
+// Replace the tab matched by /test/path:id with /test/path/123
+// and remove the original /test/path:id tab
+// If you just want to add a tab without activating (navigating to) it, you can use this API
+replaceTabByRouter('/test/path/123', '/test/path:id', true); 
 
 replaceTabByRouter('/path'); 
-// If no router is provided, the route /path is opened directly
+// If the router parameter is not provided, /path will be opened directly
+// If you just want to add a tab without activating (navigating to) it, you can use this API
+replaceTabByRouter('/path', undefined, true);
 ```
 
 ### 3.`swapTab`
@@ -174,4 +187,16 @@ moveTab('/test/path1', '/test/path2');
 // If /test/path1 is currently after /test/path2, it will be moved before it
 // If /test/path1 is currently before /test/path2, it will be moved after it
 // Common use case: update tab order after a drag-and-drop interaction
+```
+
+### 7.`getTabList`
+
+Get the list of all currently existing tab paths.
+
+```tsx
+import { getTabList } from '@umijs/max';
+
+const tabs = getTabList();
+console.log(tabs);
+// Outputs the paths of all currently existing tabs
 ```

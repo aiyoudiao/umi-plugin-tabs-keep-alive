@@ -211,13 +211,21 @@ export function useKeepOutlets() {
     };
 
     /**
+     * 获取当前所有缓存的 tab 的路径
+     */
+    const getTabList = () => {
+      return Object.keys(keepElements.current)
+    }
+
+    /**
      * NOTE 新增一个替换路径的方法， 将指定路径替换成新路径，且保持原 tab 位置
      * @param path1 路径 1，可跳转的路径，必填
      * @param path2 路径 2，可选。
      *     - 如果不传，则对当前 tab 的路径进行替换，替换为 path 1
      *     - 如果传入，则将 path 1 tab 替换为 path 2，且保持原 tab 的位置
+     * @param isStayCurrentTab 是否停留在当前激活 tab 位置
      */
-    const replaceTab = (path1: string, path2?: string) => {
+    const replaceTab = (path1: string, path2?: string, isStayCurrentTab: boolean = false) => {
       let oldTabPath = path1;
       let newTabPath = path2;
 
@@ -231,7 +239,16 @@ export function useKeepOutlets() {
         oldTabPath = window.location?.pathname?.toLowerCase();
       }
 
-      const oldIndex = keepElements.current?.[oldTabPath]?.index;
+      let oldIndex;
+      if (isStayCurrentTab) {
+        const pathList = Object.keys(keepElements.current);
+        const currentActiveIndex = pathList.findIndex(item => {
+          return item === window.location.pathname;
+        });
+        oldIndex = currentActiveIndex > -1 ? currentActiveIndex : keepElements.current?.[oldTabPath]?.index;
+      } else {
+        oldIndex = keepElements.current?.[oldTabPath]?.index;
+      }
 
       if(oldIndex === undefined) {
         throw new Error('replaceTab 方法传入 path1 不在 tab 列表中，无法进行替换');
@@ -255,8 +272,9 @@ export function useKeepOutlets() {
      * NOTE 根据路由的路径选择器去匹配替换的路径
      * @param path
      * @param myRouter
+     * @param isStayCurrentTab
      */
-    const replaceTabByRouter = (path: string, myRouter?: string) => {
+    const replaceTabByRouter = (path: string, myRouter?: string, isStayCurrentTab: boolean = false) => {
       let newPath = path, newMyRouter = myRouter;
       // 如果没有 router，则使用当前路径为 router
       if(!newMyRouter) {
@@ -268,6 +286,7 @@ export function useKeepOutlets() {
       const matchedPath = pathList.find(item => {
         return matchPath(newMyRouter, item);
       });
+
 
       // 如果两个路径相同，则直接跳转旧的路由
       if (matchedPath === newPath) {
@@ -282,7 +301,7 @@ export function useKeepOutlets() {
       }
 
       // 如果匹配成功，则进行替换
-      replaceTab(matchedPath, newPath);
+      replaceTab(matchedPath, newPath, isStayCurrentTab);
     }
 
     /**
@@ -481,10 +500,10 @@ export function useKeepOutlets() {
               closeAllTabs();
               break;
             case 'replaceTab':
-              replaceTab(payload?.path1?.toLowerCase(), payload?.path2?.toLowerCase());
+              replaceTab(payload?.path1?.toLowerCase(), payload?.path2?.toLowerCase(), payload?.isStayCurrentTab);
               break;
             case 'replaceTabByRouter':
-              replaceTabByRouter(payload?.path?.toLowerCase(), payload?.myRouter);
+              replaceTabByRouter(payload?.path?.toLowerCase(), payload?.myRouter, payload?.isStayCurrentTab);
               break;
             case 'swapTab':
               swapTab(payload?.path1?.toLowerCase(), payload?.path2?.toLowerCase());
@@ -497,6 +516,9 @@ export function useKeepOutlets() {
               break;
             case 'moveAfterTab':
               moveAfterTab(payload?.sourcePath?.toLowerCase(), payload?.targetPath?.toLowerCase());
+              break;
+            case 'getTabList':
+              getTabList();
               break;
 {{/hasTabsLayout}}
           default:
